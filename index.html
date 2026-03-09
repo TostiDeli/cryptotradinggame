@@ -20,6 +20,7 @@
     <div class="game-container">
         <!-- Market Section -->
         <div class="section active" id="marketSection">
+            <!-- Balance Card -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">💰</div>
@@ -36,22 +37,10 @@
                         <div class="stat-value" id="portfolioValue">$0</div>
                         <div class="stat-label">Портфель</div>
                     </div>
-                </div> 
-                <!-- Daily Bonus Card -->
-<div class="card" style="background: linear-gradient(145deg, #f39c12, #e67e22); margin-top: 10px;">
-    <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-        <div style="font-size: 40px; width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 15px; display: flex; align-items: center; justify-content: center;">🎁</div>
-        <div>
-            <div style="font-size: 18px; font-weight: bold; color: white;">Ежедневный бонус</div>
-            <div style="font-size: 14px; color: rgba(255,255,255,0.9);" id="bonusStreak">Серия: 0 дней</div>
-        </div>
-    </div>
-    <button onclick="claimDailyBonus()" style="width: 100%; padding: 15px; background: white; color: #e67e22; border: none; border-radius: 12px; font-size: 18px; font-weight: bold; cursor: pointer;">
-        🎁 ЗАБРАТЬ БОНУС
-    </button>
-</div>
+                </div>
             </div>
 
+            <!-- Market Card -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">📊</div>
@@ -60,6 +49,7 @@
                 <div class="crypto-list" id="cryptoList"></div>
             </div>
 
+            <!-- Trading Card -->
             <div class="card" id="tradingCard">
                 <div class="card-header">
                     <div class="card-icon">💱</div>
@@ -156,4 +146,4 @@
 
     <script src="game.js"></script>
 </body>
-    </html>
+</html>
