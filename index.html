@@ -3,30 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crypto Trader - Telegram Mini App</title>
+    <title>Crypto Trader</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0c0c1e;
+            color: white;
+            padding: 12px;
+            padding-bottom: 80px;
+        }
+        
+        .tg-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4ecca3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .card-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .balance-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #4ecca3;
+            margin: 8px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .stat-item {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ecca3;
+        }
+        
+        .crypto-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .crypto-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+        
+        .crypto-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .crypto-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .trading-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .trade-btn {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .trade-btn.buy {
+            background: #4ecca3;
+            color: black;
+        }
+        
+        .trade-btn.sell {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .trade-input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            margin: 8px 0;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0c0c1e;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 12px 20px;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        
+        .nav-item.active {
+            color: #4ecca3;
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0c0c1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #4ecca3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .price-up {
+            color: #4ecca3;
+        }
+        
+        .price-down {
+            color: #e74c3c;
+        }
+    </style>
 </head>
 <body>
-    <!-- Loading Screen -->
     <div class="loading" id="loading">
         <div class="spinner"></div>
     </div>
 
-    <!-- Telegram Header -->
     <div class="tg-header" id="tgHeader"></div>
 
     <div class="game-container">
-        <!-- Market Section (Главная) -->
+        <!-- Market Section -->
         <div class="section active" id="marketSection">
-            <!-- Balance Card -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">💰</div>
                     <div class="card-title">Баланс</div>
                 </div>
-                <div class="balance-label">Общий капитал</div>
                 <div class="balance-display" id="totalBalance">$10,000</div>
                 <div class="stats-grid">
                     <div class="stat-item">
@@ -40,7 +271,6 @@
                 </div>
             </div>
 
-            <!-- Market Card -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">📊</div>
@@ -49,85 +279,17 @@
                 <div class="crypto-list" id="cryptoList"></div>
             </div>
 
-            <!-- Trading Card -->
-            <div class="card" id="tradingCard">
+            <div class="card">
                 <div class="card-header">
                     <div class="card-icon">💱</div>
                     <div class="card-title">Торговля</div>
                 </div>
                 <div id="selectedCrypto"></div>
-                <input type="number" class="trade-input" id="tradeAmount" placeholder="Количество" min="0" step="0.001" value="0">
+                <input type="number" class="trade-input" id="tradeAmount" placeholder="Количество" value="0">
                 <div class="trading-buttons">
-                    <button class="trade-btn buy" id="buyBtn" disabled>КУПИТЬ</button>
-                    <button class="trade-btn sell" id="sellBtn" disabled>ПРОДАТЬ</button>
+                    <button class="trade-btn buy" id="buyBtn">КУПИТЬ</button>
+                    <button class="trade-btn sell" id="sellBtn">ПРОДАТЬ</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- КРИПТОВАЛЮТЫ (НОВЫЙ ОТДЕЛ) -->
-        <div class="section" id="cryptoSection">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🪙</div>
-                    <div class="card-title">Каталог криптовалют</div>
-                </div>
-                <div class="crypto-catalog" id="cryptoCatalog"></div>
-            </div>
-        </div>
-
-        <!-- ПРОФИЛЬ ИГРОКА (НОВЫЙ ОТДЕЛ) -->
-        <div class="section" id="profileSection">
-            <div class="card">
-                <div class="profile-header">
-                    <div class="profile-avatar" id="profileAvatar">👤</div>
-                    <div class="profile-info">
-                        <div class="profile-name" id="profileName">Игрок</div>
-                        <div class="profile-level" id="profileLevel">Новичок</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">📊</div>
-                    <div class="card-title">Статистика</div>
-                </div>
-                <div class="profile-stats">
-                    <div class="stat-row">
-                        <span>💰 Всего сделок:</span>
-                        <span class="stat-value" id="statTrades">0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span>📈 Лучший день:</span>
-                        <span class="stat-value" id="statBestDay">$0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span>🏆 Дней в игре:</span>
-                        <span class="stat-value" id="statDays">1</span>
-                    </div>
-                    <div class="stat-row">
-                        <span>💎 Редких монет:</span>
-                        <span class="stat-value" id="statRare">0</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🏆</div>
-                    <div class="card-title">Достижения</div>
-                </div>
-                <div class="achievements" id="profileAchievements"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">⚙️</div>
-                    <div class="card-title">Настройки</div>
-                </div>
-                <button class="settings-btn" onclick="restartGame()">
-                    🔄 Новая игра
-                </button>
             </div>
         </div>
 
@@ -136,81 +298,24 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">📁</div>
-                    <div class="card-title">Мой портфель</div>
+                    <div class="card-title">Портфель</div>
                 </div>
                 <div class="portfolio-list" id="portfolioList"></div>
             </div>
         </div>
-
-        <!-- Analytics Section -->
-        <div class="section" id="analyticsSection">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">📈</div>
-                    <div class="card-title">График</div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="priceChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">📰</div>
-                    <div class="card-title">Новости</div>
-                </div>
-                <div class="news-feed" id="newsFeed"></div>
-            </div>
-        </div>
     </div>
 
-    <!-- Bottom Navigation (ОБНОВЛЕННАЯ) -->
     <div class="bottom-nav">
         <div class="nav-item active" data-section="market">
             <span class="nav-icon">📊</span>
             <span>Рынок</span>
         </div>
-        <div class="nav-item" data-section="crypto">
-            <span class="nav-icon">🪙</span>
-            <span>Крипта</span>
-        </div>
         <div class="nav-item" data-section="portfolio">
             <span class="nav-icon">📁</span>
             <span>Портфель</span>
-        </div>
-        <div class="nav-item" data-section="profile">
-            <span class="nav-icon">👤</span>
-            <span>Профиль</span>
-        </div>
-        <div class="nav-item" data-section="analytics">
-            <span class="nav-icon">📈</span>
-            <span>Аналитика</span>
-        </div>
-    </div>
-
-    <!-- Game Over Modal -->
-    <div class="modal" id="gameOverModal">
-        <div class="modal-content">
-            <div class="modal-title">💸 ИГРА ОКОНЧЕНА</div>
-            <p style="text-align: center; margin-bottom: 20px;">Вы потеряли все деньги...</p>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-value" id="finalDays">0</div>
-                    <div class="stat-label">Дней</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="finalBalance">$0</div>
-                    <div class="stat-label">Капитал</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="finalTrades">0</div>
-                    <div class="stat-label">Сделок</div>
-                </div>
-            </div>
-            <button class="modal-btn" onclick="restartGame()">НАЧАТЬ ЗАНОВО</button>
         </div>
     </div>
 
     <script src="game.js"></script>
 </body>
-    </html>
+</html>
