@@ -25,10 +25,7 @@ let gameState = {
         millionaire: false,
         diversified: false,
         whale: false
-    },
-    // Daily bonus properties
-    lastBonusDate: null,
-    bonusStreak: 0
+    }
 };
 
 // Cryptocurrencies
@@ -62,7 +59,6 @@ function initGame() {
     });
 
     loadGame();
-    checkBonusOnStart();
     updateHeader();
     updateCryptoList();
     updatePortfolio();
@@ -92,73 +88,6 @@ function initGame() {
     document.getElementById('buyBtn').addEventListener('click', buyCrypto);
     document.getElementById('sellBtn').addEventListener('click', sellCrypto);
 }
-
-// ===== DAILY BONUS FUNCTIONS =====
-function checkDailyBonus() {
-    const now = new Date();
-    const today = now.toDateString();
-    
-    if (gameState.lastBonusDate !== today) {
-        if (gameState.lastBonusDate) {
-            const lastDate = new Date(gameState.lastBonusDate);
-            const diffDays = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
-            if (diffDays > 1) {
-                gameState.bonusStreak = 0;
-            }
-        }
-        return true;
-    }
-    return false;
-}
-
-function claimDailyBonus() {
-    if (!checkDailyBonus()) {
-        tg.showPopup({
-            title: '❌ Бонус',
-            message: 'Бонус уже получен сегодня!',
-            buttons: [{ type: 'ok' }]
-        });
-        return;
-    }
-    
-    const now = new Date();
-    gameState.lastBonusDate = now.toDateString();
-    gameState.bonusStreak++;
-    
-    const baseBonus = 100;
-    const streakBonus = gameState.bonusStreak * 50;
-    const totalBonus = baseBonus + streakBonus;
-    
-    gameState.cash += totalBonus;
-    
-    tg.showPopup({
-        title: '🎁 Бонус получен!',
-        message: `+$${totalBonus}\nСерия: ${gameState.bonusStreak} дней`,
-        buttons: [{ type: 'ok' }]
-    });
-    
-    tg.HapticFeedback.notificationOccurred('success');
-    updateBalances();
-    saveGame();
-}
-
-function checkBonusOnStart() {
-    if (checkDailyBonus()) {
-        tg.showPopup({
-            title: '🎁 Ежедневный бонус!',
-            message: `Забери бонус!\nТекущая серия: ${gameState.bonusStreak} дней`,
-            buttons: [
-                { id: 'claim', type: 'default', text: 'Забрать' },
-                { type: 'cancel', text: 'Позже' }
-            ]
-        }, (buttonId) => {
-            if (buttonId === 'claim') {
-                claimDailyBonus();
-            }
-        });
-    }
-}
-// ===== END DAILY BONUS =====
 
 function updateHeader() {
     const header = document.getElementById('tgHeader');
@@ -573,9 +502,7 @@ function saveGame() {
         day: gameState.day,
         totalTrades: gameState.totalTrades,
         portfolio: gameState.portfolio,
-        achievements: gameState.achievements,
-        lastBonusDate: gameState.lastBonusDate,
-        bonusStreak: gameState.bonusStreak
+        achievements: gameState.achievements
     }));
     
     if (tg.CloudStorage) {
@@ -593,8 +520,6 @@ function loadGame() {
             gameState.totalTrades = data.totalTrades || 0;
             gameState.portfolio = data.portfolio;
             gameState.achievements = data.achievements || gameState.achievements;
-            gameState.lastBonusDate = data.lastBonusDate || null;
-            gameState.bonusStreak = data.bonusStreak || 0;
         } catch (e) {
             console.log('Error loading saved game');
         }
@@ -603,4 +528,55 @@ function loadGame() {
 
 function gameOver() {
     document.getElementById('finalDays').textContent = gameState.day;
-    document.getElementById('finalBalance').textContent
+    document.getElementById('finalBalance').textContent = '$0';
+    document.getElementById('finalTrades').textContent = gameState.totalTrades;
+    
+    document.getElementById('gameOverModal').classList.add('active');
+    tg.HapticFeedback.notificationOccurred('error');
+}
+
+function restartGame() {
+    gameState = {
+        cash: 10000,
+        day: 1,
+        totalTrades: 0,
+        portfolio: {},
+        selectedCrypto: null,
+        priceHistory: [],
+        achievements: {
+            firstTrade: false,
+            millionaire: false,
+            diversified: false,
+            whale: false
+        }
+    };
+
+    cryptocurrencies.forEach(crypto => {
+        crypto.price = crypto.id === 'bitcoin' ? 50000 :
+                      crypto.id === 'ethereum' ? 3000 :
+                      crypto.id === 'solana' ? 100 :
+                      crypto.id === 'cardano' ? 1.2 : 15;
+        crypto.change = 0;
+        
+        gameState.portfolio[crypto.id] = 0;
+        gameState.priceHistory[crypto.id] = [crypto.price];
+    });
+
+    document.getElementById('gameOverModal').classList.remove('active');
+    document.getElementById('tradeAmount').value = 0;
+    
+    updateHeader();
+    updateCryptoList();
+    updatePortfolio();
+    updateBalances();
+    updateAchievements();
+    
+    document.getElementById('newsFeed').innerHTML = '';
+    addNews('Новая игра! Удачи!', 'neutral');
+    
+    saveGame();
+    tg.HapticFeedback.notificationOccurred('success');
+}
+
+// Start game
+initGame();
