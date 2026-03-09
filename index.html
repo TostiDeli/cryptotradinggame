@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crypto Trader - Telegram Mini App</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Telegram Header -->
+    <div class="tg-header" id="tgHeader"></div>
+
+    <div class="game-container">
+        <!-- Market Section -->
+        <div class="section active" id="marketSection">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">💰</div>
+                    <div class="card-title">Баланс</div>
+                </div>
+                <div class="balance-label">Общий капитал</div>
+                <div class="balance-display" id="totalBalance">$10,000</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="cashBalance">$10,000</div>
+                        <div class="stat-label">Наличные</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="portfolioValue">$0</div>
+                        <div class="stat-label">Портфель</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Рынок</div>
+                </div>
+                <div class="crypto-list" id="cryptoList"></div>
+            </div>
+
+            <div class="card" id="tradingCard">
+                <div class="card-header">
+                    <div class="card-icon">💱</div>
+                    <div class="card-title">Торговля</div>
+                </div>
+                <div id="selectedCrypto"></div>
+                <input type="number" class="trade-input" id="tradeAmount" placeholder="Количество" min="0" step="0.001" value="0">
+                <div class="trading-buttons">
+                    <button class="trade-btn buy" id="buyBtn" disabled>КУПИТЬ</button>
+                    <button class="trade-btn sell" id="sellBtn" disabled>ПРОДАТЬ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Section -->
+        <div class="section" id="portfolioSection">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📁</div>
+                    <div class="card-title">Мой портфель</div>
+                </div>
+                <div class="portfolio-list" id="portfolioList"></div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="section" id="analyticsSection">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📈</div>
+                    <div class="card-title">График</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📰</div>
+                    <div class="card-title">Новости</div>
+                </div>
+                <div class="news-feed" id="newsFeed"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏆</div>
+                    <div class="card-title">Достижения</div>
+                </div>
+                <div class="achievements" id="achievements"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" data-section="market">
+            <span class="nav-icon">📊</span>
+            <span>Рынок</span>
+        </div>
+        <div class="nav-item" data-section="portfolio">
+            <span class="nav-icon">📁</span>
+            <span>Портфель</span>
+        </div>
+        <div class="nav-item" data-section="analytics">
+            <span class="nav-icon">📈</span>
+            <span>Аналитика</span>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div class="modal" id="gameOverModal">
+        <div class="modal-content">
+            <div class="modal-title">💸 ИГРА ОКОНЧЕНА</div>
+            <p style="text-align: center; margin-bottom: 20px;">Вы потеряли все деньги...</p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="finalDays">0</div>
+                    <div class="stat-label">Дней</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="finalBalance">$0</div>
+                    <div class="stat-label">Капитал</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="finalTrades">0</div>
+                    <div class="stat-label">Сделок</div>
+                </div>
+            </div>
+            <button class="modal-btn" onclick="restartGame()">НАЧАТЬ ЗАНОВО</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+  </html>
