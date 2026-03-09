@@ -18,7 +18,7 @@
     <div class="tg-header" id="tgHeader"></div>
 
     <div class="game-container">
-        <!-- Market Section -->
+        <!-- Market Section (Главная) -->
         <div class="section active" id="marketSection">
             <!-- Balance Card -->
             <div class="card">
@@ -64,6 +64,73 @@
             </div>
         </div>
 
+        <!-- КРИПТОВАЛЮТЫ (НОВЫЙ ОТДЕЛ) -->
+        <div class="section" id="cryptoSection">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🪙</div>
+                    <div class="card-title">Каталог криптовалют</div>
+                </div>
+                <div class="crypto-catalog" id="cryptoCatalog"></div>
+            </div>
+        </div>
+
+        <!-- ПРОФИЛЬ ИГРОКА (НОВЫЙ ОТДЕЛ) -->
+        <div class="section" id="profileSection">
+            <div class="card">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">👤</div>
+                    <div class="profile-info">
+                        <div class="profile-name" id="profileName">Игрок</div>
+                        <div class="profile-level" id="profileLevel">Новичок</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Статистика</div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-row">
+                        <span>💰 Всего сделок:</span>
+                        <span class="stat-value" id="statTrades">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>📈 Лучший день:</span>
+                        <span class="stat-value" id="statBestDay">$0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>🏆 Дней в игре:</span>
+                        <span class="stat-value" id="statDays">1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>💎 Редких монет:</span>
+                        <span class="stat-value" id="statRare">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🏆</div>
+                    <div class="card-title">Достижения</div>
+                </div>
+                <div class="achievements" id="profileAchievements"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Настройки</div>
+                </div>
+                <button class="settings-btn" onclick="restartGame()">
+                    🔄 Новая игра
+                </button>
+            </div>
+        </div>
+
         <!-- Portfolio Section -->
         <div class="section" id="portfolioSection">
             <div class="card">
@@ -94,26 +161,26 @@
                 </div>
                 <div class="news-feed" id="newsFeed"></div>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-icon">🏆</div>
-                    <div class="card-title">Достижения</div>
-                </div>
-                <div class="achievements" id="achievements"></div>
-            </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation (ОБНОВЛЕННАЯ) -->
     <div class="bottom-nav">
         <div class="nav-item active" data-section="market">
             <span class="nav-icon">📊</span>
             <span>Рынок</span>
         </div>
+        <div class="nav-item" data-section="crypto">
+            <span class="nav-icon">🪙</span>
+            <span>Крипта</span>
+        </div>
         <div class="nav-item" data-section="portfolio">
             <span class="nav-icon">📁</span>
             <span>Портфель</span>
+        </div>
+        <div class="nav-item" data-section="profile">
+            <span class="nav-icon">👤</span>
+            <span>Профиль</span>
         </div>
         <div class="nav-item" data-section="analytics">
             <span class="nav-icon">📈</span>
@@ -146,4 +213,4 @@
 
     <script src="game.js"></script>
 </body>
-</html>
+    </html>
